@@ -104,6 +104,33 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    // ===== GESTION DES CATEGORIES =====
+
+    public List<Categorie> getAllCategories() {
+        return categorieRepository.findAll();
+    }
+
+    @Transactional
+    public Categorie createCategory(String name) {
+        if (categorieRepository.existsByName(name)) {
+            throw new RuntimeException("Cette catégorie existe déjà");
+        }
+        return categorieRepository.save(new Categorie(name));
+    }
+
+    @Transactional
+    public void deleteCategory(Long id) {
+        Categorie categorie = categorieRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Catégorie non trouvée"));
+        // Détacher les produits de cette catégorie
+        List<Product> products = productRepository.findByCategory(categorie);
+        for (Product p : products) {
+            p.setCategory(null);
+            productRepository.save(p);
+        }
+        categorieRepository.deleteById(id);
+    }
+
     private ProductResponse toProductResponse(Product product) {
         return new ProductResponse(
                 product.getId(),

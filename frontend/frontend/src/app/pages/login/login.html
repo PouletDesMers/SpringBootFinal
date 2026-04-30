@@ -1,1 +1,24 @@
-<p>login works!</p>
+<div class="auth-container">
+  <div class="auth-card">
+    <h1>Connexion</h1>
+    <p class="subtitle">Connectez-vous a votre compte</p>
+    <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input id="username" type="text" [(ngModel)]="username" name="username" required placeholder="Votre nom d'utilisateur" />
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" [(ngModel)]="password" name="password" required placeholder="Votre mot de passe" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+    </form>
+    <p class="auth-link">Pas encore de compte ? <a routerLink="/register">S'inscrire</a></p>
+    <div class="demo-accounts">
+      <p><strong>Comptes de demonstration :</strong></p>
+      <p>Admin : admin / admin123</p>
+      <p>User : user / user123</p>
+    </div>
+  </div>
+</div>

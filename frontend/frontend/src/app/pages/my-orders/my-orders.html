@@ -1,1 +1,51 @@
-<p>my-orders works!</p>
+<div class="orders-container">
+  <header class="orders-header">
+    <h1>Mes commandes</h1>
+    <p class="subtitle">Consultez l historique de vos commandes</p>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement de vos commandes...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+
+  <div *ngIf="!loading && orders.length === 0 && !error" class="empty-state">
+    <div class="empty-icon">&#128230;</div>
+    <h2>Aucune commande</h2>
+    <p>Vous n'avez pas encore passe de commande.</p>
+    <a routerLink="/" class="btn btn-primary">Decouvrir les produits</a>
+  </div>
+
+  <div class="orders-list" *ngIf="orders.length > 0">
+    <div class="order-card" *ngFor="let order of orders">
+      <div class="order-header">
+        <div class="order-id">Commande #{{ order.id }}</div>
+        <span class="order-status {{ getStatusClass(order.status) }}">{{ order.status }}</span>
+      </div>
+      <div class="order-body">
+        <div class="order-info-row">
+          <span class="order-label">Produit</span>
+          <span class="order-value">{{ order.productName }}</span>
+        </div>
+        <div class="order-info-row">
+          <span class="order-label">Quantite</span>
+          <span class="order-value">{{ order.quantite }}</span>
+        </div>
+        <div class="order-info-row">
+          <span class="order-label">Prix unitaire</span>
+          <span class="order-value">{{ order.productPrice | number:'1.2-2' }} &euro;</span>
+        </div>
+        <div class="order-info-row">
+          <span class="order-label">Total</span>
+          <span class="order-value order-total">{{ (order.productPrice * order.quantite) | number:'1.2-2' }} &euro;</span>
+        </div>
+        <div class="order-info-row">
+          <span class="order-label">Date</span>
+          <span class="order-value">{{ formatDate(order.orderDate) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

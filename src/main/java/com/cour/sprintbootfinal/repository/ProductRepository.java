@@ -18,8 +18,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByCategory(Categorie category);
 
-    @Query("SELECT p FROM Product p WHERE " +
+    @Query(value = "SELECT * FROM products p WHERE " +
            "LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(p.category.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+           "(p.category_id IS NOT NULL AND LOWER((SELECT c.name FROM categories c WHERE c.id = p.category_id)) LIKE LOWER(CONCAT('%', :keyword, '%')))",
+           countQuery = "SELECT count(*) FROM products p WHERE " +
+           "LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "(p.category_id IS NOT NULL AND LOWER((SELECT c.name FROM categories c WHERE c.id = p.category_id)) LIKE LOWER(CONCAT('%', :keyword, '%')))",
+           nativeQuery = true)
     Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

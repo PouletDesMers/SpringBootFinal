@@ -1,1 +1,43 @@
-<p>profile works!</p>
+<div class="profile-container">
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="avatar">
+        {{ username.charAt(0).toUpperCase() }}
+      </div>
+      <h1>Mon Profil</h1>
+    </div>
+
+    <div class="profile-body">
+      <div class="info-row">
+        <span class="info-label">Nom d'utilisateur</span>
+        <span class="info-value">{{ username }}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Roles</span>
+        <span class="info-value">
+          <span class="role-badge" *ngFor="let role of roles" [class.admin]="role === 'ADMIN'">
+            {{ role }}
+          </span>
+          <span *ngIf="roles.length === 0" class="text-muted">Aucun role</span>
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Statut</span>
+        <span class="info-value">
+          <span class="status-badge" [class.connected]="isLoggedIn">
+            {{ isLoggedIn ? 'Connecte' : 'Deconnecte' }}
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <button (click)="logout()" class="btn btn-danger">
+        Se deconnecter
+      </button>
+      <a routerLink="/" class="btn btn-outline">Retour a l'accueil</a>
+    </div>
+  </div>
+</div>

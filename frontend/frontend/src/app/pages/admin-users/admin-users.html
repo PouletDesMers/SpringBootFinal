@@ -1,1 +1,64 @@
-<p>admin-users works!</p>
+<div class="admin-users-container">
+  <h1>Gestion des utilisateurs</h1>
+
+  <div *ngIf="loading" class="loading">Chargement des utilisateurs...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="table-wrapper" *ngIf="!loading && users.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nom d'utilisateur</th>
+          <th>Email</th>
+          <th>Rôles</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <span class="role-badge" *ngFor="let role of user.roles">{{ role }}</span>
+            <span *ngIf="user.roles.length === 0">-</span>
+          </td>
+          <td>{{ user.enabled ? 'Actif' : 'Inactif' }}</td>
+          <td>
+            <button class="btn-edit" (click)="openEditRolesModal(user)">Modifier rôles</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && users.length === 0" class="loading">
+    Aucun utilisateur trouvé.
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>Modifier les rôles</h2>
+      <p>
+        Utilisateur : <strong>{{ selectedUser?.username }}</strong>
+        ({{ selectedUser?.email }})
+      </p>
+
+      <div class="form-group">
+        <label>Rôles (séparés par des virgules)</label>
+        <input type="text" [(ngModel)]="editableRoles" placeholder="ADMIN, USER" />
+        <div class="form-hint">Exemple : ADMIN, USER</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveRoles()" [disabled]="saving">
+          {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

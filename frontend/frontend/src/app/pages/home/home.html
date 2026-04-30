@@ -1,1 +1,61 @@
-<p>home works!</p>
+<div class="home-container">
+  <header class="home-header">
+    <h1>Catalogue de produits</h1>
+    <p class="subtitle">Decouvrez notre selection de produits</p>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="keyword" (keyup.enter)="onSearch()" placeholder="Rechercher un produit..." class="search-input" />
+    <button (click)="onSearch()" class="btn btn-search">
+      <span class="search-icon">&#128269;</span> Rechercher
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement des produits...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+
+  <div *ngIf="!auth.isLoggedIn()" class="guest-banner">
+    <p>Vous naviguez en tant qu'invite.</p>
+    <div class="guest-links">
+      <a routerLink="/login" class="btn btn-primary">Se connecter</a>
+      <a routerLink="/register" class="btn btn-outline">Creer un compte</a>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && products.length === 0 && !error" class="empty-state">
+    <p>Aucun produit trouve.</p>
+  </div>
+
+  <div class="product-grid" *ngIf="products.length > 0">
+    <div class="product-card" *ngFor="let p of products">
+      <div class="product-image">
+        <img [src]="p.lienImage || 'assets/placeholder.png'" alt="{{ p.name }}" />
+      </div>
+      <div class="product-info">
+        <h3 class="product-name">{{ p.name }}</h3>
+        <p class="product-description">{{ (p.description || '') | slice:0:100 }}{{ (p.description || '').length > 100 ? '...' : '' }}</p>
+        <div class="product-details">
+          <span class="product-price">{{ p.price | number:'1.2-2' }} &euro;</span>
+          <span class="product-stock" [class.out-of-stock]="p.stockQuantity === 0">
+            <span *ngIf="p.stockQuantity > 0; else outOfStock">Stock: {{ p.stockQuantity }}</span>
+            <ng-template #outOfStock>Rupture</ng-template>
+          </span>
+        </div>
+        <a [routerLink]="['/products', p.id]" class="btn btn-primary btn-block btn-sm">Voir le produit</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="btn-page" [disabled]="currentPage === 0" (click)="goToPage(0)">&laquo;</button>
+    <button class="btn-page" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">&lsaquo;</button>
+    <button class="btn-page" *ngFor="let page of pages" [class.active]="page === currentPage" (click)="goToPage(page)">{{ page + 1 }}</button>
+    <button class="btn-page" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">&rsaquo;</button>
+    <button class="btn-page" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">&raquo;</button>
+    <span class="page-info">Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+  </div>
+</div>

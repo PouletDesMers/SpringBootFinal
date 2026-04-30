@@ -1,1 +1,68 @@
-<p>product-detail works!</p>
+<div class="product-detail-container">
+  <div class="back-link">
+    <a routerLink="/">&larr; Retour au catalogue</a>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement du produit...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+
+  <div *ngIf="!loading && product" class="product-content">
+    <div class="product-image-section">
+      <img [src]="product.lienImage || 'assets/placeholder.png'" alt="{{ product.name }}" class="product-image" />
+    </div>
+
+    <div class="product-info-section">
+      <h1 class="product-name">{{ product.name }}</h1>
+
+      <div class="product-meta">
+        <span class="product-category" *ngIf="product.categoryName">Categorie : {{ product.categoryName }}</span>
+        <span class="product-price">{{ product.price | number:'1.2-2' }} &euro;</span>
+      </div>
+
+      <p class="product-description">{{ product.description }}</p>
+
+      <div class="product-stock-info">
+        <span class="stock-badge" [class.in-stock]="product.stockQuantity > 0" [class.out-of-stock]="product.stockQuantity === 0">
+          <span *ngIf="product.stockQuantity > 0; else outOfStockLabel">
+            En stock : {{ product.stockQuantity }} unites
+          </span>
+          <ng-template #outOfStockLabel>Rupture de stock</ng-template>
+        </span>
+      </div>
+
+      <div *ngIf="auth.isLoggedIn() && product.stockQuantity > 0" class="order-section">
+        <h2>Passer une commande</h2>
+        <div *ngIf="orderSuccess" class="alert alert-success">{{ orderSuccess }}</div>
+        <div *ngIf="orderError" class="alert alert-error">{{ orderError }}</div>
+        <form (ngSubmit)="placeOrder()" #orderForm="ngForm">
+          <div class="form-group">
+            <label for="quantite">Quantite</label>
+            <input
+              id="quantite"
+              type="number"
+              [(ngModel)]="quantite"
+              name="quantite"
+              required
+              min="1"
+              [max]="product.stockQuantity"
+              class="quantity-input"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" [disabled]="ordering">
+            <span *ngIf="!ordering">Commander</span>
+            <span *ngIf="ordering">Traitement en cours...</span>
+          </button>
+        </form>
+      </div>
+
+      <div *ngIf="!auth.isLoggedIn()" class="login-prompt">
+        <p>Connectez-vous pour passer une commande.</p>
+        <a routerLink="/login" class="btn btn-primary">Se connecter</a>
+      </div>
+    </div>
+  </div>
+</div>

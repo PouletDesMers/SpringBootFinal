@@ -1,1 +1,22 @@
-<router-outlet></router-outlet>
+<nav class="navbar">
+  <div class="nav-container">
+    <a class="nav-logo" routerLink="/">SprintBootFinal</a>
+    <div class="nav-links">
+      <a routerLink="/" class="nav-link">Accueil</a>
+      <ng-container *ngIf="isLoggedIn; else guestLinks">
+        <a routerLink="/my-orders" class="nav-link">Mes commandes</a>
+        <a routerLink="/profile" class="nav-link">{{ username }}</a>
+        <a *ngIf="isAdmin" routerLink="/admin" class="nav-link admin-link">Admin</a>
+        <button class="nav-btn" (click)="logout()">Deconnexion</button>
+      </ng-container>
+      <ng-template #guestLinks>
+        <a routerLink="/login" class="nav-link">Connexion</a>
+        <a routerLink="/register" class="nav-link">Inscription</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>
+
+<main class="main-content">
+  <router-outlet (activate)="updateAuthState()"></router-outlet>
+</main>

@@ -98,6 +98,33 @@ public class AdminController {
         }
     }
 
+    // ============ GESTION DES CATEGORIES ============
+
+    @GetMapping("/categories")
+    public ResponseEntity<?> getAllCategories() {
+        return ResponseEntity.ok(productService.getAllCategories());
+    }
+
+    @PostMapping("/categories")
+    public ResponseEntity<?> createCategory(@RequestBody Map<String, String> body) {
+        try {
+            String name = body.get("name");
+            return ResponseEntity.status(HttpStatus.CREATED).body(productService.createCategory(name));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+        try {
+            productService.deleteCategory(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
     // ============ GESTION DES COMMANDES ============
 
     @GetMapping("/orders")
